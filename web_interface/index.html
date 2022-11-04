@@ -1,0 +1,311 @@
+<!--
+Web Serial API: https://web.dev/serial/
+Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creating_and_triggering_events
+
+ -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Melexis I2C Stick</title>
+  <link rel="stylesheet" href="interface.css">
+  <link rel="icon" type="image/x-icon" href="assets/site/favicon.ico">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-left">
+    <a class="brand" href="https://melexis.github.io/mlx-i2c-stick"><img src="assets/site/logo_white.png" height="30" alt=""></a>
+    <div class="tabs">
+      <a id="tab_i2c_stick" class="active">I2C Stick</a>
+      <a id="tab_interface">Interface</a>
+      <a id="tab_products">Products</a>
+      <a id="tab_firmware">Firmware</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a id="site_version" title="Release" class="active">Nov 2022</a>
+    <a id="lbl_selected_port" title="VID/PID of selected serial port" class="active">USB</a>
+    <a id="btn_open_port" class="button outline">Open</a>
+    <a id="btn_close_port" class="button outline">Close</a>
+  </div>
+</nav>
+
+<div id="serial_port">
+  <div id="receive_data"></div>
+  <div id="sent_data"></div>  
+</div>
+
+<div id="main">
+  <div class="tabs row col-12">
+    <div id="tab_i2c_stick" class="my_col active col-12" style="padding:10px">
+      <h1>Content loaded dynamically!</h1>
+    </div>
+    <div id="tab_interface" class="my_col col-12">
+      <nav class="tabs is-full">
+        <a id="tab_int_terminal" class="active">Terminal</a>
+        <a id="tab_int_transient">Transient chart</a>
+        <a id="tab_int_spatial">Spatial chart</a>
+        <a id="tab_int_mem">Memory</a>
+      </nav>
+      <div id="tab_int_terminal" class="my_tab row active">
+        <div class="my_col col-10">
+          <main id="log" style="left: 0px; width: 100%; height:100px;">
+            <section id="serial_terminal" style="height: 100%; overflow: auto;">
+            </section>        
+          </main>        
+          <input type="text" id="serial_send" name="serial_send" style="width:100%;" placeholder="Enter here the command to sent and press <ENTER>" />
+        </div>
+        <div class="col-2">
+
+          <div class="checkboxes">
+            <input type="checkbox" id="chk_auto_scroll" name="chk_auto_scroll" value="auto_scroll" checked=true class="checkmark">
+              <label for="chk_auto_scroll">Auto scroll</label>
+            <br/>
+            <input type="checkbox" id="chk_add_datetime" name="chk_add_datetime" value="add_datetime" checked=true class="checkmark">
+              <label for="chk_add_datetime">Add date&time</label>
+          </div>
+
+          <div class="buttons">
+            <div class="row">
+              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+            </div>
+            <div class="row">
+              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
+              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
+              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
+              <button id="btn_nd" data-cmd="nd" title="is New Data available?" class="button cmd">ND</button>
+              <button id="btn_raw" data-cmd="raw" title="get RAW sensor data" class="button cmd">RAW</button>
+            </div>
+            <div class="row">
+              <button id="btn_as" data-cmd="as" title="show Active Sensor" class="button cmd">AS</button>
+              <button id="btn_sn" data-cmd="sn" title="get Serial Number" class="button cmd">SN</button>
+              <button id="btn_cs" data-cmd="cs" title="get Configuration of Sensor" class="button cmd">CS</button>
+              <button id="btn_ee" data-cmd="ee" title="get EEprom content" class="button cmd">EE</button>
+            </div>
+            <div class="row">
+              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
+              <button id="btn_continuous"  data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
+            </div>
+            <div class="row">
+              <button id="btn_help" data-cmd="?" title="Help" class="button cmd">Help</button>
+            </div>
+          </div>
+
+
+        </div>        
+      </div>
+      <div id="tab_int_transient" class="my_tab row">
+        <div class="my_col col-10">
+          <div id="div_transient_chart" style="display: inline-block; position: relative; width: 100%; height: 400px;">
+            <canvas id="transient_chart">Your browser does not support the HTML5 canvas tag.</canvas>
+          </div>        
+        </div>
+
+        <div class="my_col col-2">
+          <div class="checkboxes">
+            <input type="checkbox" id="chk_transient_enable" name="chk_transient_enable" value="chk_transient_enable" checked=false class="checkmark default_off">
+              <label for="chk_transient_enable">Enable chart</label>
+            <br/>
+          </div>
+          <div class="buttons">
+            <div class="row">
+              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+            </div>
+            <div class="row">
+              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
+              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
+            </div>
+            <div class="row">
+              <button id="btn_continuous" data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
+            </div>
+            <div class="row">
+              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
+            </div>
+            <div class="row">
+              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab_int_spatial" class="my_tab row">
+        <div class="my_col col-10">
+          <div id="div_spatial_chart" style="display: inline-block; position: relative; width: 100%; height: 400px;">
+            <canvas id="spatial_chart" style="border:1px solid #d3d3d3; aspect-ratio: auto;">Your browser does not support the HTML5 canvas tag.</canvas>
+          </div>        
+        </div>
+
+        <div class="my_col col-2">
+          <div class="checkboxes">
+            <input type="checkbox" id="chk_spatial_enable" name="chk_spatial_enable" value="chk_spatial_enable" checked=false class="checkmark default_off">
+              <label for="chk_spatial_enable">Enable chart</label>
+            <br/>
+            <label for="combo_spatial_interpolation">Interpolation:</label>
+            <select name="combo_spatial_interpolation" id="combo_spatial_interpolation">
+              <option value="0">Off</option>
+              <option value="2">2x</option>
+              <option value="4">4x</option>
+            </select>
+            <label for="combo_spatial_orientation">Orientation:</label>
+            <select name="combo_spatial_orientation" id="combo_spatial_orientation">
+              <option value="0">Landscape</option>
+              <option value="90">Portrait</option>
+              <option value="180">Landscape upsidedown</option>
+              <option value="270">Portrait upsidedown</option>
+            </select>
+            <label for="combo_spatial_mirror">Mirror:</label>
+            <select name="combo_spatial_mirror" id="combo_spatial_mirror">
+              <option value="0">None</option>
+              <option value="x">X(horizontal)</option>
+              <option value="y">Y(vertical)</option>
+              <option value="xy">Both X&Y</option>
+            </select>
+
+          </div>
+          <div class="buttons">
+            <div class="row">
+              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+            </div>
+            <div class="row">
+              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
+              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
+            </div>
+            <div class="row">
+              <button id="btn_continuous" data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
+            </div>
+            <div class="row">
+              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
+            </div>
+            <div class="row">
+              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+    </div>
+
+    <div id="tab_products" class="my_col col-12">
+      <h2>products</h2>
+    </div>
+
+    <div id="tab_firmware" class="my_col col-12">
+      <h2>document loaded dynamically</h2>
+    </div>
+
+  </div>
+</div>
+
+</body>
+<script type="text/javascript" src="./assets/site/jquery-3.6.1.min.js"></script>
+<script type="text/javascript" src="./assets/site/chart.min.js"></script>
+<script type="text/javascript" src="./interface.js"></script>
+
+<script type="text/javascript">
+
+function set_terminal_height()
+{
+  setTimeout(function() {
+    let total_height = $(window).height();
+    let height1 = $("#serial_send").outerHeight();
+    let height2 = $("nav.nav").outerHeight();
+    let height3 = $("nav.tabs").outerHeight();
+    let new_height = total_height - height1 - height2 - height3;
+    $("main#log").height(new_height);
+  }, 100);
+}
+
+function set_transient_chart_height()
+{
+  setTimeout(function() {
+    let total_height = $(window).height();
+    let height1 = $("nav.nav").outerHeight();
+    let height2 = $("nav.tabs").outerHeight();
+    let new_height = total_height - height1 - height2 - 10;
+    $("div#div_transient_chart").height(new_height);
+
+  }, 100);
+}
+
+
+function set_spatial_chart_height()
+{
+  setTimeout(function() {
+    let total_height = $(window).height();
+    let height1 = $("nav.nav").outerHeight();
+    let height2 = $("nav.tabs").outerHeight();
+    let new_height = total_height - height1 - height2 - 10;
+    let new_width = $("div#div_spatial_chart").innerWidth();
+    $("div#div_spatial_chart").height(new_height);
+    $("canvas#spatial_chart").prop('height', new_height);
+    $("canvas#spatial_chart").prop('width', new_width);
+    heat_map(10, 45);
+  }, 100);
+}
+
+
+
+
+$(window).resize(function() {
+  $("div#main").css("margin-top", "" + $("nav.nav").height() +"px");
+  set_terminal_height();
+  set_transient_chart_height();
+  set_spatial_chart_height();
+});
+
+
+$(document).ready(function () {
+  $("div#main").css("margin-top", "" + $("nav.nav").height() +"px");
+
+  $(".checkmark.default_off").prop('checked', false);
+
+  $("div#tab_i2c_stick").load("mlx-i2c-stick.html");
+  $("div#tab_products").load("products.html");
+  $("div#tab_firmware").load("firmware.html");
+
+  $("nav.nav div.tabs>a").click(function() {
+    set_terminal_height();
+    set_transient_chart_height();
+    set_spatial_chart_height();
+    $("div.tabs>a").removeClass("active");
+    $(this).addClass("active");
+    $("div.tabs>div").removeClass("active");
+    $("div.tabs>div#" + $(this).attr('id')).addClass("active");
+  });
+
+  $("#btn_open_port").click(function () {
+    $("div.tabs>a#tab_interface").trigger("click");
+    set_terminal_height();
+    set_transient_chart_height()
+    set_spatial_chart_height();
+  });
+  $("#btn_close_port").click(function () {
+    $("div.tabs>a#tab_interface").trigger("click");
+    set_terminal_height();
+    set_transient_chart_height();
+    set_spatial_chart_height();
+  });
+
+  $("nav.tabs>a").click(function() {
+    set_terminal_height();
+    set_transient_chart_height();
+    set_spatial_chart_height();
+    $(this).siblings().removeClass("active");
+    $(this).addClass("active");
+    $(this).parent().siblings("div.my_tab").removeClass("active");
+    $(this).parent().siblings("div.my_tab#"+ $(this).attr('id')).addClass("active");
+  });
+
+});
+
+</script>
+
+</html>

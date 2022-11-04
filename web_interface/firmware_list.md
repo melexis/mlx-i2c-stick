@@ -1,0 +1,1 @@
+- [adafruit_trinkeyrp2040qt](firmware/rp2040.rp2040.adafruit_trinkeyrp2040qt/mlx-i2c-stick-arduino.ino.uf2)

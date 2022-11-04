@@ -1,0 +1,123 @@
+@import "assets/site/chota.min.css";
+
+:root {
+  --color-primary: #65BBA9; /* mlx electric green */
+  --color-lightGrey: #b2c4cb; /* mlx steel grey */
+  --color-darkGrey: #3e4242; /* mlx charcoal grey */
+  --color-error: #DB4140; /* mlx coral red */
+  --color-success: #65BBA9; /* mlx electric green */
+
+  --font-color: #00354B; /* mlx royal blue */
+
+  --font-size: 1.6rem;
+  --font-family-sans: sans-serif;
+  --font-family-mono: monaco, "Consolas", "Lucida Console", monospace;
+
+}
+
+.nav {
+  overflow: hidden;
+  background-color: #00354B;
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+}
+
+div.tabs > a:not(.active) {
+	color: var(--color-primary);
+	filter: brightness(70%);
+}
+
+div.nav-right > a.button {
+	color: var(--color-primary);
+}
+
+div#main {
+  margin: 0px;
+  margin-top: 50px;
+  padding: 0px;
+}
+div#main>div.tabs {
+  margin: 0px;
+  max-width: 100%;
+  display: -webkit-box;
+}
+
+div#tab_interface {
+  margin: 0px;
+  max-width: 100%;
+}
+
+a#lbl_selected_port{
+	color: var(--color-lightGrey);
+  font-size: 0.5em;
+}
+
+a#site_version{
+  color: var(--color-lightGrey);
+  font-size: 0.5em;
+}
+
+h1, h2{
+	color: var(--color-primary);
+}
+
+
+div.tabs > div:not(.active)
+{
+  display: none;
+}
+
+
+div#serial_port
+{
+  display: none;
+}
+
+main>section>pre{
+  display: inline;
+  background-color: white;
+  padding: 0px;
+  font-size: 10px;
+}
+
+main>section{
+  line-height: 10px;
+}
+
+nav.tabs {
+  line-height: 10px;  
+}
+
+nav.tabs>a.active {
+  background-color: var(--color-primary);
+}
+
+div.my_col
+{
+  margin: 0px;
+}
+div.my_col.col-12
+{
+  min-width: 100%;
+}
+div.my_col div.row
+{
+  margin-left: 0px;
+}
+
+div.my_tab:not(.active)
+{
+  display: none;
+}
+
+div.my_tab
+{
+  margin: 0px;
+}
+
+div.buttons button.button{
+  margin: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
+}

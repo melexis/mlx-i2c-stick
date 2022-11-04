@@ -1,0 +1,5 @@
+dist
+*/build
+web_interface/*.html
+!web_interface/index.html
+/firmware_list.md
