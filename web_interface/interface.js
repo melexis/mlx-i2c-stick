@@ -254,15 +254,19 @@ $(document).ready(function () {
     {
       let line = e.detail;
 
-      if (line.startsWith ("@"))
+      if (line.startsWith ("@") || line.startsWith ("mv:"))
       { // update chart
         //@5A:01:mv:5A:00105147:23.25,24.77
-        let items = line.split(":");
-        let drv = items[1];
-        let time = items[4];
-        let sa = items[3];
-        let values = items[5].split(",");
-        drv = Number(drv);
+        //mv:5A:00105147:23.25,24.77
+        let start = 0;
+        if (line.startsWith ("@"))
+        {
+          start = 7;
+        }
+        let items = line.slice(start).split(":");
+        let time = items[2];
+        let sa = items[1];
+        let values = items[3].split(",");
         time = Number(time) / 1000;
         for (let i=0; i<values.length; i++)
         {
@@ -271,7 +275,14 @@ $(document).ready(function () {
 
         if (!(sa in connected_slaves))
         {
-          sent_command("scan\n");
+          sent_command("ls\n");
+          sent_command("cs:"+sa+"\n");
+          return;
+        }
+
+        if (!('device' in connected_slaves[sa]))
+        {
+          sent_command("ls\n");
           sent_command("cs:"+sa+"\n");
           return;
         }
@@ -279,6 +290,17 @@ $(document).ready(function () {
         if (!('cs' in connected_slaves[sa]))
         {
           sent_command("cs:"+sa+"\n");
+          return;
+        }
+
+        if (items[3] == "FAIL")
+        {
+          let c = document.getElementById("transient_chart");
+          let ctx = c.getContext('2d');
+          console.log("FAIL!", items[4]);
+          ctx.fillStyle = "black";
+          ctx.font = "20px Courier New";
+          ctx.fillText("FAIL: @"+sa+":"+connected_slaves[sa].device+" =>"+items[4], 0, 20);
           return;
         }
 
@@ -394,11 +416,25 @@ $(document).ready(function () {
       let line = e.detail;
 
 
-      if (line.startsWith ("@"))
+      if (line.startsWith ("@") || line.startsWith ("mv:"))
       { // update chart
         //@5A:01:mv:5A:00105147:23.25,24.77
-        //@3A:05:03274358:tt:3A:24.24,23.51
-        let items = line.split(":");
+        //mv:5A:00105147:23.25,24.77
+        let start = 0;
+        if (line.startsWith ("@"))
+        {
+          start = 7;
+        }
+        let items = line.slice(start).split(":");
+        let time = items[2];
+        let sa = items[1];
+        let values = items[3].split(",");
+        time = Number(time) / 1000;
+        for (let i=0; i<values.length; i++)
+        {
+          values[i] = Number(values[i]);
+        }
+
         let c = document.getElementById("spatial_chart");
         let ratio = c.width / c.height;
         let ctx = c.getContext('2d');
@@ -406,12 +442,12 @@ $(document).ready(function () {
         let orientation = Number($("#combo_spatial_orientation").find(":selected").val());
         let mirror = $("#combo_spatial_mirror").find(":selected").val();
 
-        if (items[5] == "FAIL")
+        if (items[3] == "FAIL")
         {
-          console.log("FAIL!", items[6]);
+          console.log("FAIL!", items[4]);
           ctx.fillStyle = "black";
           ctx.font = "20px Courier New";
-          ctx.fillText("FAIL:"+items[6], 0, 20);
+          ctx.fillText("FAIL:"+items[4], 0, 20);
           return;
         }
 
@@ -422,26 +458,15 @@ $(document).ready(function () {
           spatial_previous_orientation = orientation;
         }
 
-        let drv = items[1];
-        let time = items[4];
-        let sa = items[3];
-        let values = items[5].split(",");
-        drv = Number(drv);
-        time = Number(time) / 1000;
-        for (let i=0; i<values.length; i++)
-        {
-          values[i] = Number(values[i]);
-        }
-
         if (!(sa in connected_slaves))
         {
-          sent_command("scan\n");
+          sent_command("ls\n");
           sent_command("cs:"+sa+"\n");
           return;
         }
         if (!('device' in connected_slaves[sa]))
         {
-          sent_command("scan\n");
+          sent_command("ls\n");
           sent_command("cs:"+sa+"\n");
           return;
         }
@@ -457,6 +482,13 @@ $(document).ready(function () {
         let rows = 24;
         let cols = 32;
         let is_supported = false;
+
+        if (connected_slaves[sa].device == "MLX9064x")
+        {
+          sent_command("ls\n");
+          sent_command("cs:"+sa+"\n");
+          return;
+        }
 
         if (connected_slaves[sa].device == "MLX90640")
         {
@@ -649,16 +681,19 @@ $(document).ready(function () {
   // listener to update slave list
   div.addEventListener('receive_line', (e) => { 
     let line = e.detail;
-    if (line.startsWith ("scan:"))
+    if (line.startsWith ("ls:") || line.startsWith ("scan:"))
     { // index slave
-      // "scan:3A:05,MLX90632"
+      // "ls:5A:01,00,00,MLX90614"
+      // "scan:5A:01,00,00,MLX90614"
       let tmp = line.split(":");
       let sa = tmp[1];
       let drv_dev = tmp[2].split(",");
       let drv = Number(drv_dev[0]);
-      let device = drv_dev[1];
+      let raw = Number(drv_dev[1]);
+      let disabled = Number(drv_dev[2]);
+      let device = drv_dev[3];
 
-      connected_slaves[sa] = {drv: drv, device: device};
+      connected_slaves[sa] = {drv: drv, device: device, raw: raw, disabled: disabled};
     }
 
     if (line.startsWith ("cs:"))

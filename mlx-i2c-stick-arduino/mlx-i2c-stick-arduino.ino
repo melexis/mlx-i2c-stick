@@ -523,6 +523,12 @@ handle_cmd(uint8_t channel_mask, const char *cmd)
         uint8_to_hex(buf, g_device_list[sa] & 0x0F);
         send_answer_chunk(channel_mask, buf, 0);
         send_answer_chunk(channel_mask, ",", 0);
+        uint8_to_hex(buf, g_device_list[sa] & 0x40 ? 1 : 0);
+        send_answer_chunk(channel_mask, buf, 0);
+        send_answer_chunk(channel_mask, ",", 0);
+        uint8_to_hex(buf, g_device_list[sa] & 0x20 ? 1 : 0);
+        send_answer_chunk(channel_mask, buf, 0);
+        send_answer_chunk(channel_mask, ",", 0);
 
         for (byte k = 0; k < 16; k++)
         {
@@ -554,58 +560,6 @@ handle_cmd(uint8_t channel_mask, const char *cmd)
     return NULL;
   }
 
-  this_cmd = "mv"; // Measure (sensor) Value command
-  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
-  {
-    int16_t sa = -1;
-    if (cmd[strlen(this_cmd)] == ':')
-    {
-      sa = atohex8(cmd+strlen(this_cmd)+1);
-    }
-    if (sa < 0)
-    {
-      sa = g_active_slave;
-    }
-
-    handle_cmd_mv(sa, channel_mask);
-    return NULL;
-  }
-
-  this_cmd = "nd"; // New Data command
-  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
-  {
-    int16_t sa = -1;
-    if (cmd[strlen(this_cmd)] == ':')
-    {
-      sa = atohex8(cmd+strlen(this_cmd)+1);
-    }
-    if (sa < 0)
-    {
-      sa = g_active_slave;
-    }
-
-    handle_cmd_nd(sa, channel_mask);
-    return NULL;
-  }
-
-  this_cmd = "as"; // Active Slave command
-  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
-  {
-    send_answer_chunk(channel_mask, "as:", 0);
-    char buf[16]; memset(buf, 0, sizeof(buf));
-    send_answer_chunk(channel_mask, bytetohex(g_active_slave), 0);
-    send_answer_chunk(channel_mask, ":", 0);
-    send_answer_chunk(channel_mask, bytetostr(g_device_list[g_active_slave] & 0x0F), 0);
-    send_answer_chunk(channel_mask, ",", 0);
-
-    for (byte k = 0; k < 16; k++)
-    {
-      buf[k] = pgm_read_byte_near(DEVICE_NAMES[g_device_list[g_active_slave] & 0x0F]+k);
-    }
-    send_answer_chunk(channel_mask, buf, 1);
-    return NULL;
-  }
-
   this_cmd = "ls"; // List Slave command
   if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
   {
@@ -624,10 +578,10 @@ handle_cmd(uint8_t channel_mask, const char *cmd)
         send_answer_chunk(channel_mask, ":", 0);
         uint8_to_hex(buf, g_device_list[sa] & 0x0F);
         send_answer_chunk(channel_mask, buf, 0);
-        send_answer_chunk(channel_mask, ":", 0);
+        send_answer_chunk(channel_mask, ",", 0);
         uint8_to_hex(buf, g_device_list[sa] & 0x40 ? 1 : 0);
         send_answer_chunk(channel_mask, buf, 0);
-        send_answer_chunk(channel_mask, ":", 0);
+        send_answer_chunk(channel_mask, ",", 0);
         uint8_to_hex(buf, g_device_list[sa] & 0x20 ? 1 : 0);
         send_answer_chunk(channel_mask, buf, 0);
         send_answer_chunk(channel_mask, ",", 0);
@@ -692,6 +646,58 @@ handle_cmd(uint8_t channel_mask, const char *cmd)
     {
       send_answer_chunk(channel_mask, "FAIL: slave not seen by scan; try scan again", 0);
     }
+    return NULL;
+  }
+
+  this_cmd = "mv"; // Measure (sensor) Value command
+  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
+  {
+    int16_t sa = -1;
+    if (cmd[strlen(this_cmd)] == ':')
+    {
+      sa = atohex8(cmd+strlen(this_cmd)+1);
+    }
+    if (sa < 0)
+    {
+      sa = g_active_slave;
+    }
+
+    handle_cmd_mv(sa, channel_mask);
+    return NULL;
+  }
+
+  this_cmd = "nd"; // New Data command
+  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
+  {
+    int16_t sa = -1;
+    if (cmd[strlen(this_cmd)] == ':')
+    {
+      sa = atohex8(cmd+strlen(this_cmd)+1);
+    }
+    if (sa < 0)
+    {
+      sa = g_active_slave;
+    }
+
+    handle_cmd_nd(sa, channel_mask);
+    return NULL;
+  }
+
+  this_cmd = "as"; // Active Slave command
+  if (!strncmp(this_cmd, cmd, strlen(this_cmd)))
+  {
+    send_answer_chunk(channel_mask, "as:", 0);
+    char buf[16]; memset(buf, 0, sizeof(buf));
+    send_answer_chunk(channel_mask, bytetohex(g_active_slave), 0);
+    send_answer_chunk(channel_mask, ":", 0);
+    send_answer_chunk(channel_mask, bytetostr(g_device_list[g_active_slave] & 0x0F), 0);
+    send_answer_chunk(channel_mask, ",", 0);
+
+    for (byte k = 0; k < 16; k++)
+    {
+      buf[k] = pgm_read_byte_near(DEVICE_NAMES[g_device_list[g_active_slave] & 0x0F]+k);
+    }
+    send_answer_chunk(channel_mask, buf, 1);
     return NULL;
   }
 
