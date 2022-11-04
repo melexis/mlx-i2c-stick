@@ -43,7 +43,7 @@ extern "C" {
 //#undef DEVICE_MLX90640_TEST_ENABLE
 
 //#define BUFFER_COMMAND_ENABLE
-//#undef BUFFER_COMMAND_ENABLE
+#undef BUFFER_COMMAND_ENABLE
 
 
 // board information
@@ -125,7 +125,7 @@ const char DEVICE_NAMES[16][16] PROGMEM = {"No driver",    // DEVICE =  0
 #define CHANNEL_BLUETOOTH     3
 #define CHANNEL_BUFFER        4
 
-#define BUFFER_CHANNEL_SIZE (128*1024)
+#define BUFFER_CHANNEL_SIZE (2*1024)
 
 // global variables
 extern int8_t g_mode;

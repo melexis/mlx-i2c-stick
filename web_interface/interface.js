@@ -844,6 +844,14 @@ $(document).ready(function () {
 
   transient_chart.options.animation.duration = 0;
   transient_chart.options.scales.x.ticks.count = 8;
+
+  // update i2c frequency at the master (Configure Hub, ch)
+  $('select.combo_i2c_freq').on('change', function() {
+    $('select.combo_i2c_freq').val(this.value);
+    sent_command("+ch:I2C_FREQ="+this.value+"\n");
+  });
+
+
 });
 
 
