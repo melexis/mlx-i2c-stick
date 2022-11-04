@@ -69,7 +69,7 @@ div.tabs > div:not(.active)
 }
 
 
-div#serial_port
+div#serial_port, div.template
 {
   display: none;
 }
@@ -121,3 +121,9 @@ div.buttons button.button{
   padding-left: 0px;
   padding-right: 0px;
 }
+
+div.slaves>input.checkmark{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+

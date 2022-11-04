@@ -637,14 +637,18 @@ handle_cmd(uint8_t channel_mask, const char *cmd)
       if (disable > 0)
       {
         g_device_list[sa] |= uint8_t(0x20);
+        uint8_to_hex(buf, 1);
       } else
       {
         g_device_list[sa] &= uint8_t(~0x20);
+        uint8_to_hex(buf, 0);
       }
-      send_answer_chunk(channel_mask, "OK [i2c-stick register]", 0);
+      send_answer_chunk(channel_mask, buf, 0);
+      send_answer_chunk(channel_mask, ":", 0);
+      send_answer_chunk(channel_mask, "OK [i2c-stick register]", 1);
     } else
     {
-      send_answer_chunk(channel_mask, "FAIL: slave not seen by scan; try scan again", 0);
+      send_answer_chunk(channel_mask, "FAIL: slave not seen by scan; try scan again", 1);
     }
     return NULL;
   }

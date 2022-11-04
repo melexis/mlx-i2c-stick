@@ -37,6 +37,36 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
   <div id="sent_data"></div>  
 </div>
 
+<div class="template slave_transient_chart">
+  <div data-sa="sa" class="row slaves">
+    <input type="checkbox" id="slave_enable" name="chk_slave_enable" value="chk_slave_enable" checked=false class="slave_enable checkmark default_off" onchange="checkbox_slave_enable(this);">
+    <button id="btn_config" data-cmd="cs" title="Configure Slave" class="button cmd" onclick="button_action(this);">@[sa]:[device]</button>
+    <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd" onclick="button_action(this);">MV</button>
+  </div>
+</div>
+
+<div class="template slave_spatial_chart">
+  <div data-sa="sa" class="row slaves">
+    <input type="checkbox" id="slave_enable" name="chk_slave_enable" value="chk_slave_enable" checked=false class="slave_enable checkmark default_off" onchange="checkbox_slave_enable(this);">
+    <button id="btn_config" data-cmd="cs" title="Configure Slave" class="button cmd" onclick="button_action(this);">@[sa]:[device]</button>
+    <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd" onclick="button_action(this);">MV</button>
+  </div>
+</div>
+
+<div class="template slave_terminal">
+  <div data-sa="sa" class="row slaves">
+    <input type="checkbox" id="slave_enable" name="chk_slave_enable" value="chk_slave_enable" checked=false class="slave_enable checkmark default_off" onchange="checkbox_slave_enable(this);">
+    <button id="btn_config" data-cmd="cs" title="Configure Slave" class="button cmd" onclick="button_action(this);">@[sa]:[device]</button>
+    <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd" onclick="button_action(this);">MV</button>
+    <button id="btn_raw" data-cmd="raw" title="get RAW sensor data" class="button cmd" onclick="button_action(this);">RAW</button>
+    <button id="btn_nd" data-cmd="nd" title="is New Data available?" class="button cmd" onclick="button_action(this);">ND</button>
+    <button id="btn_sn" data-cmd="sn" title="get Serial Number" class="button cmd" onclick="button_action(this);">SN</button>
+    <button id="btn_ee" data-cmd="ee" title="get EEprom content" class="button cmd" onclick="button_action(this);">EE</button>
+    <button id="btn_cs" data-cmd="cs" title="get Configuration of Sensor" class="button cmd" onclick="button_action(this);">CS</button>
+  </div>
+</div>
+
+
 <div id="main">
   <div class="tabs row col-12">
     <div id="tab_i2c_stick" class="my_col active col-12" style="padding:10px">
@@ -49,15 +79,16 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
         <a id="tab_int_spatial">Spatial chart</a>
         <a id="tab_int_mem">Memory</a>
       </nav>
+
       <div id="tab_int_terminal" class="my_tab row active">
-        <div class="my_col col-10">
+        <div class="my_col col-8">
           <main id="log" style="left: 0px; width: 100%; height:100px;">
             <section id="serial_terminal" style="height: 100%; overflow: auto;">
             </section>        
           </main>        
           <input type="text" id="serial_send" name="serial_send" style="width:100%;" placeholder="Enter here the command to sent and press <ENTER>" />
         </div>
-        <div class="col-2">
+        <div class="col-4">
 
           <div class="checkboxes">
             <input type="checkbox" id="chk_auto_scroll" name="chk_auto_scroll" value="auto_scroll" checked=true class="checkmark">
@@ -78,33 +109,18 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
 
           <div class="buttons">
             <div class="row">
-              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+              <button id="btn_help" onclick="button_action(this);" data-cmd="?" title="Help" class="button cmd">Help</button>
+              <button id="btn_scan" onclick="button_action(this);" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">Scan</button>
+              <button id="btn_continuous" onclick="button_action(this);"  data-cmd=";" title="Continuous acquisition" class="button cmd">Start</button>
+              <button id="btn_interactive" onclick="button_action(this);" data-cmd="!" title="Interactive acquisition" class="button cmd">Stop</button>
             </div>
-            <div class="row">
-              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
-              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
-              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
-              <button id="btn_nd" data-cmd="nd" title="is New Data available?" class="button cmd">ND</button>
-              <button id="btn_raw" data-cmd="raw" title="get RAW sensor data" class="button cmd">RAW</button>
-            </div>
-            <div class="row">
-              <button id="btn_as" data-cmd="as" title="show Active Sensor" class="button cmd">AS</button>
-              <button id="btn_sn" data-cmd="sn" title="get Serial Number" class="button cmd">SN</button>
-              <button id="btn_cs" data-cmd="cs" title="get Configuration of Sensor" class="button cmd">CS</button>
-              <button id="btn_ee" data-cmd="ee" title="get EEprom content" class="button cmd">EE</button>
-            </div>
-            <div class="row">
-              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
-              <button id="btn_continuous"  data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
-            </div>
-            <div class="row">
-              <button id="btn_help" data-cmd="?" title="Help" class="button cmd">Help</button>
+            <div id="terminal_slaves" class="slaves">
+              No slaves found; connect slaves and click `scan` button
             </div>
           </div>
-
-
         </div>        
       </div>
+
       <div id="tab_int_transient" class="my_tab row">
         <div class="my_col col-10">
           <div id="div_transient_chart" style="display: inline-block; position: relative; width: 100%; height: 400px;">
@@ -128,20 +144,12 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
           </div>
           <div class="buttons">
             <div class="row">
-              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+              <button id="btn_scan" onclick="button_action(this);" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">Scan</button>
+              <button id="btn_continuous" onclick="button_action(this);" data-cmd=";" title="Continuous acquisition" class="button cmd">Start</button>
+              <button id="btn_interactive" onclick="button_action(this);" data-cmd="!" title="Interactive acquisition" class="button cmd">Stop</button>
             </div>
-            <div class="row">
-              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
-              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
-            </div>
-            <div class="row">
-              <button id="btn_continuous" data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
-            </div>
-            <div class="row">
-              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
-            </div>
-            <div class="row">
-              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
+            <div id="transient_chart_slaves" class="slaves">
+              No slaves found; connect slaves and click `scan` button
             </div>
           </div>
         </div>
@@ -167,44 +175,33 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
               <option value="F400k">I2C - 400kHz</option>
               <option value="F1M"  >I2C - 1MHz</option>
             </select>
-            <label for="combo_spatial_interpolation">Interpolation:</label>
             <select name="combo_spatial_interpolation" id="combo_spatial_interpolation">
-              <option value="0">Off</option>
-              <option value="2">2x</option>
-              <option value="4">4x</option>
+              <option value="0">No interpolation</option>
+              <option value="2">2x interpolation</option>
+              <option value="4">4x interpolation</option>
             </select>
-            <label for="combo_spatial_orientation">Orientation:</label>
             <select name="combo_spatial_orientation" id="combo_spatial_orientation">
               <option value="0">Landscape</option>
               <option value="90">Portrait</option>
               <option value="180">Landscape upsidedown</option>
               <option value="270">Portrait upsidedown</option>
             </select>
-            <label for="combo_spatial_mirror">Mirror:</label>
             <select name="combo_spatial_mirror" id="combo_spatial_mirror">
-              <option value="0">None</option>
-              <option value="x">X(horizontal)</option>
-              <option value="y">Y(vertical)</option>
-              <option value="xy">Both X&Y</option>
+              <option value="0">No mirror</option>
+              <option value="x">Mirror X(horizontal)</option>
+              <option value="y">Mirror Y(vertical)</option>
+              <option value="xy">Mirror both X&Y</option>
             </select>
 
           </div>
           <div class="buttons">
             <div class="row">
-              <button id="btn_scan" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">I2C Scan</button>
+              <button id="btn_scan" onclick="button_action(this);" data-cmd="scan" title="Scan the I2C bus for slave sensors" class="button cmd">Scan</button>
+              <button id="btn_continuous" onclick="button_action(this);" data-cmd=";" title="Continuous acquisition" class="button cmd">Start</button>
+              <button id="btn_interactive" onclick="button_action(this);" data-cmd="!" title="Interactive acquisition" class="button cmd">Stop</button>
             </div>
-            <div class="row">
-              <button id="btn_prev_slave" data-cmd="<" title="Select previous sensor on the bus" class="button cmd" style="margin-right: 0px;">&lt;</button>
-              <button id="btn_next_slave" data-cmd=">" title="Select next sensor on the bus" class="button cmd" style="margin-left: 0px;">&gt;</button>
-            </div>
-            <div class="row">
-              <button id="btn_continuous" data-cmd=";" title="Continuous acquisition" class="button cmd">Continuous</button>
-            </div>
-            <div class="row">
-              <button id="btn_interactive" data-cmd="!" title="Interactive acquisition" class="button cmd">Interactive</button>
-            </div>
-            <div class="row">
-              <button id="btn_mv" data-cmd="mv" title="Interactive Measure sensor Values" class="button cmd">MV</button>
+            <div id="spatial_chart_slaves" class="slaves">
+              No slaves found; connect slaves and click `scan` button
             </div>
           </div>
         </div>

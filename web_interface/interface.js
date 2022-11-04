@@ -248,6 +248,20 @@ $(document).ready(function () {
 
   }, false);
 
+  // listener to enable buttons
+  div.addEventListener('receive_line', (e) => {
+    let line = e.detail;
+    console.log(line);
+    if (line.startsWith("dis:"))
+    {
+      console.log('dis...');
+      let items = line.split(":");
+      let sa = items[1];
+      let disabled = Number(items[2]);
+      $("div[data-sa='"+sa+"']>input.slave_enable").prop('checked', disabled ? false : true);
+    }
+  });
+
   // listener to update the chart
   div.addEventListener('receive_line', (e) => { 
     if ($("#chk_transient_enable").is(":checked"))
@@ -679,7 +693,7 @@ $(document).ready(function () {
 
 
   // listener to update slave list
-  div.addEventListener('receive_line', (e) => { 
+  div.addEventListener('receive_line', (e) => {
     let line = e.detail;
     if (line.startsWith ("ls:") || line.startsWith ("scan:"))
     { // index slave
@@ -694,6 +708,22 @@ $(document).ready(function () {
       let device = drv_dev[3];
 
       connected_slaves[sa] = {drv: drv, device: device, raw: raw, disabled: disabled};
+
+      new_div = $($(".slave_transient_chart").html()).attr("data-sa", sa);
+      new_div.children("#btn_config").text("@"+sa+":"+device);
+      new_div.children("#slave_enable").prop('checked', disabled ? false : true);
+      console.log(new_div.html());
+      new_div.appendTo("#transient_chart_slaves");
+
+      new_div = $($(".slave_spatial_chart").html()).attr("data-sa", sa);
+      new_div.children("#btn_config").text("@"+sa+":"+device);
+      new_div.children("#slave_enable").prop('checked', disabled ? false : true);
+      new_div.appendTo("#spatial_chart_slaves");
+
+      new_div = $($(".slave_terminal").html()).attr("data-sa", sa);
+      new_div.children("#btn_config").text("@"+sa+":"+device);
+      new_div.children("#slave_enable").prop('checked', disabled ? false : true);
+      new_div.appendTo("#terminal_slaves");
     }
 
     if (line.startsWith ("cs:"))
@@ -701,6 +731,10 @@ $(document).ready(function () {
       // "cs:3A:DRV=05"
       let tmp = line.split(":");
       let sa = tmp[1];
+      if (sa == "FAIL")
+      {
+        return;
+      }
       let kv = tmp[2];
       if (kv == "RO")
       {
@@ -837,13 +871,16 @@ $(document).ready(function () {
 
   }, false);
 
-  // reset the connected_slave container when we detect a scan.
+  // reset the connected_slave container when we detect a scan or ls command.
   div.addEventListener('sent', async (e) => { 
     var value_str = e.detail;
-    if (['5', 'scan\n'].includes(value_str))
+    if (['5', 'scan\n', '5\n', 'ls\n'].includes(value_str))
     {
       connected_slaves = {};
       transient_chart.data.datasets = []; // also reset the transient plot data config, as trace_i became invalid
+      $("#terminal_slaves").html(""); // empty slave buttons
+      $("#transient_chart_slaves").html(""); // empty slave buttons
+      $("#spatial_chart_slaves").html(""); // empty slave buttons
     }
 
   }, false);
@@ -1072,10 +1109,31 @@ $("#btn_close_port").click(async () => {
   await close_port();
 });
 
-$("button.cmd").click(function() {
-  sent_command($(this).data("cmd") + "\n");
-});
 
+function button_action(but)
+{
+  let sa = $(but).parent().data("sa");
+  if (sa === undefined)
+  {
+    sent_command($(but).data("cmd") + "\n");
+  } else
+  {
+    sent_command($(but).data("cmd") + ":" + sa + "\n");
+  }
+}
+
+function checkbox_slave_enable(chkbox)
+{
+  let sa = $(chkbox).parent().data("sa");
+  if (sa === undefined)
+  {
+    console.log("no slave address assigned; did nothing");
+  } else
+  {
+    let disabled = $(chkbox).is(":checked");
+    sent_command("dis:" + sa + ":" + (disabled ? "0" : "1") + "\n");
+  }
+}
 
 $("#serial_send").on('keyup', function (val, key) {
   const single_char_cmd_list = [';', '!', '>', '<', '?', '1', '5'];
