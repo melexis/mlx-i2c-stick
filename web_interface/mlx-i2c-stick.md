@@ -8,11 +8,28 @@ copyright: 'Melexis'
 Yet another I2C interface...  
 However our `mlx-i2c-stick` aims to:  
 - Provide a low cost interface towards our 3.3V supplied sensors who uses the I2C communication bus.
-- Use as much as possbile off the shelve available material/modules.
+- Use as much as possbile off the shelf available material/modules.
 - Create a friction free getting starting experience. 
 - Enable prototyping using its small sensor boards.
 - Provide a reference `code` (firmware) based on the arduino platform; snippets can be used in end-user-applications.
 
+## What is mlx-i2c-stick?
+
+Microcontroller on one hand a USB CDC UART and on the other a I2C master at 3.3V.  
+We provide open source firmware and an userinterface to easily get started with our I2C/3.3V based sensors.
+![](assets/mlx-i2c-stick-overview.png)
+
+## Getting started
+
+1. Click the `open` button on the top right of the screen.
+1. Select the serial port of the mlx-i2c-stick.
+1. Enable the chart (transient or spatial)
+1. The `Scan` button will scan the I2C bus for slaves
+1. The `Start` button will start continiously measuring all recognised slaves
+1. The `Stop` button will stop continiously measuring the slaves
+1. The slaves will appear on the left column.
+1. The `MV` button will initiate a singlee 'Measure Values' action.
+1. The terminal let you do other cool stuff, more on this later.
 
 ## The hardware
 
@@ -30,11 +47,9 @@ However our `mlx-i2c-stick` aims to:
 Our sensors boards minimizes the board size to the bare minimum while we maximize the capability to use the sensor boards in a prototype by having the sensor mounted at opposite site as the connector and other components.
 
 PCB:
-- mlx90632: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90632-breakout/readme.md
-- mlx90614: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90614-breakout/readme.md
-- mlx90640: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90640-breakout/readme.md
-
-Note: more to come.
+- MLX90632: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90632-breakout/readme.md
+- MLX90614: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90614-breakout/readme.md
+- MLX90640: https://github.com/melexis/mlx-i2c-stick/blob/main/mlx90640-breakout/readme.md
 
 
 ## Disclaimer

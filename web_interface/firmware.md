@@ -14,6 +14,12 @@ Meaning that this information is only needed when you buy yourself from off the 
 
 ### Instruction
 
-To install a `UF2` file, you start with pressing both `RST` and `BOOT` button on the MCU at the same time, then release `RST` button, then moments later release also the `BOOT` button. Now a flash drive should appear and you can drag and drop (copy) the `UF2` file to the root of that drive. Once that is done, you are ready to use this interface!
+1. Download the `UF2` file from the pre-compiled list below.
+1. Press both `RST` and `BOOT` button on the MCU at the same time.
+1. Release only the `RST` button.
+1. Then moments later release also the `BOOT` button.
+1. Now a flash drive should appear.
+1. drag and drop (copy) the `UF2` file to the root of that drive.
+1. Once this copy is finished, you are ready to use mlx-i2c-stick!
 
 ## List of pre-compiled MCU

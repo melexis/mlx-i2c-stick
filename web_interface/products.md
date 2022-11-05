@@ -16,6 +16,7 @@ As stated in the `mlx-i2c-stick` introduction, here we focus on our 3.3V supplie
 
 ## Magnetic Position Sensors
 
-- MLX90393 -> https://melexis.com/mlx90393
-- MLX90395 -> https://melexis.com/mlx90395
+- MLX90393`!` -> https://melexis.com/mlx90393
+- MLX90395`!` -> https://melexis.com/mlx90395
 
+`!`: not yet supported by mlx-i2c-stick firmware V1.1.0

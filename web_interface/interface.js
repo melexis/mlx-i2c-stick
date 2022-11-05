@@ -26,6 +26,7 @@ var receive_buffer = "";
 var t_min = 15;
 var t_max = 35;
 var spatial_previous_orientation = 0;
+var sent_timer;
 
 var connected_slaves = {};
 let heat_map_gradient_colors = null;
@@ -140,6 +141,18 @@ function get_pixel_value(img_dat, x,y, result = []){
 
 function sent_command(command)
 {
+  if (sent_timer === undefined)
+  {
+    sent_timer = new Date();
+  }
+  let now = new Date();
+  if ((now - sent_timer) < 100)
+  {
+    // too fast, do nothing.
+    return;
+  }
+
+  sent_timer = now;
   const sent_event = new CustomEvent('sent', { detail: command });
   div = document.querySelector('#sent_data');
   div.dispatchEvent(sent_event);  
@@ -251,10 +264,8 @@ $(document).ready(function () {
   // listener to enable buttons
   div.addEventListener('receive_line', (e) => {
     let line = e.detail;
-    console.log(line);
     if (line.startsWith("dis:"))
     {
-      console.log('dis...');
       let items = line.split(":");
       let sa = items[1];
       let disabled = Number(items[2]);
@@ -314,7 +325,7 @@ $(document).ready(function () {
           console.log("FAIL!", items[4]);
           ctx.fillStyle = "black";
           ctx.font = "20px Courier New";
-          ctx.fillText("FAIL: @"+sa+":"+connected_slaves[sa].device+" =>"+items[4], 0, 20);
+          ctx.fillText("FAIL: @"+sa+":"+connected_slaves[sa].device+" =>"+items[4], 20, 50);
           return;
         }
 
@@ -461,7 +472,7 @@ $(document).ready(function () {
           console.log("FAIL!", items[4]);
           ctx.fillStyle = "black";
           ctx.font = "20px Courier New";
-          ctx.fillText("FAIL:"+items[4], 0, 20);
+          ctx.fillText("FAIL:"+items[4], 20, 50);
           return;
         }
 
@@ -712,7 +723,6 @@ $(document).ready(function () {
       new_div = $($(".slave_transient_chart").html()).attr("data-sa", sa);
       new_div.children("#btn_config").text("@"+sa+":"+device);
       new_div.children("#slave_enable").prop('checked', disabled ? false : true);
-      console.log(new_div.html());
       new_div.appendTo("#transient_chart_slaves");
 
       new_div = $($(".slave_spatial_chart").html()).attr("data-sa", sa);
@@ -993,6 +1003,9 @@ async function serial_open_and_start_reading()
           sent_command("bi\n");
           sleep(10).then(() => {
             sent_command("fv\n");
+            sleep(10).then(() => {
+              sent_command("ls\n");
+            });
           });
         });
       }

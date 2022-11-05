@@ -74,13 +74,13 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
     </div>
     <div id="tab_interface" class="my_col col-12">
       <nav class="tabs is-full">
-        <a id="tab_int_terminal" class="active">Terminal</a>
-        <a id="tab_int_transient">Transient chart</a>
+        <a id="tab_int_transient" class="active">Transient chart</a>
         <a id="tab_int_spatial">Spatial chart</a>
-        <a id="tab_int_mem">Memory</a>
+        <a id="tab_int_terminal">Terminal</a>
+        <!-- <a id="tab_int_mem">Memory</a> -->
       </nav>
 
-      <div id="tab_int_terminal" class="my_tab row active">
+      <div id="tab_int_terminal" class="my_tab row">
         <div class="my_col col-8">
           <main id="log" style="left: 0px; width: 100%; height:100px;">
             <section id="serial_terminal" style="height: 100%; overflow: auto;">
@@ -121,7 +121,7 @@ Events in Javascript: https://developer.mozilla.org/en-US/docs/Web/Events/Creati
         </div>        
       </div>
 
-      <div id="tab_int_transient" class="my_tab row">
+      <div id="tab_int_transient" class="my_tab row active">
         <div class="my_col col-10">
           <div id="div_transient_chart" style="display: inline-block; position: relative; width: 100%; height: 400px;">
             <canvas id="transient_chart">Your browser does not support the HTML5 canvas tag.</canvas>

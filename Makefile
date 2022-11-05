@@ -12,7 +12,7 @@ arduino_trinkey_qt:
 	arduino-cli ${ARDUINO_ADD_URL} core install rp2040:rp2040
 	arduino-cli lib install "SparkFun ADS122C04 ADC Arduino Library"
 	cd mlx-i2c-stick-arduino && arduino-cli ${ARDUINO_ADD_URL} compile --fqbn rp2040:rp2040:adafruit_trinkeyrp2040qt mlx-i2c-stick-arduino.ino -e --clean
-	echo "- [adafruit_trinkeyrp2040qt](firmware/rp2040.rp2040.adafruit_trinkeyrp2040qt/mlx-i2c-stick-arduino.ino.uf2)" >> firmware_list.md
+	echo "- [adafruit Trinkey RP2040 QT UF2-file](firmware/rp2040.rp2040.adafruit_trinkeyrp2040qt/mlx-i2c-stick-arduino.ino.uf2) [url](https://www.adafruit.com/product/5056)" >> firmware_list.md
 
 dist: arduino_trinkey_qt
 	@-cp -fv firmware_list.md web_interface
