@@ -8,7 +8,7 @@ copyright: 'Melexis'
 Yet another I2C interface...  
 However our `mlx-i2c-stick` aims to:  
 - Provide a low cost interface towards our 3.3V supplied sensors who uses the I2C communication bus.
-- Use as much as possbile off the shelf available material/modules.
+- Use as much as possbile off-the-shelf available material/modules.
 - Create a friction free getting starting experience. 
 - Enable prototyping using its small sensor boards.
 - Provide a reference `code` (firmware) based on the arduino platform; snippets can be used in end-user-applications.
