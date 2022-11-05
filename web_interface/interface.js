@@ -143,10 +143,10 @@ function sent_command(command)
 {
   if (sent_timer === undefined)
   {
-    sent_timer = new Date();
+    sent_timer = 0;
   }
   let now = new Date();
-  if ((now - sent_timer) < 100)
+  if ((now - sent_timer) < 50)
   {
     // too fast, do nothing.
     return;
@@ -301,14 +301,19 @@ $(document).ready(function () {
         if (!(sa in connected_slaves))
         {
           sent_command("ls\n");
-          sent_command("cs:"+sa+"\n");
+          sleep(100).then(() => {
+            sent_command("cs:"+sa+"\n");
+          });
+
           return;
         }
 
         if (!('device' in connected_slaves[sa]))
         {
           sent_command("ls\n");
-          sent_command("cs:"+sa+"\n");
+          sleep(100).then(() => {
+            sent_command("cs:"+sa+"\n");
+          });
           return;
         }
 
@@ -486,13 +491,17 @@ $(document).ready(function () {
         if (!(sa in connected_slaves))
         {
           sent_command("ls\n");
-          sent_command("cs:"+sa+"\n");
+          sleep(100).then(() => {
+            sent_command("cs:"+sa+"\n");
+          });
           return;
         }
         if (!('device' in connected_slaves[sa]))
         {
           sent_command("ls\n");
-          sent_command("cs:"+sa+"\n");
+          sleep(100).then(() => {
+            sent_command("cs:"+sa+"\n");
+          });
           return;
         }
 
@@ -999,11 +1008,11 @@ async function serial_open_and_start_reading()
     {
       {
         sent_command("mlx\n");
-        sleep(10).then(() => {
+        sleep(100).then(() => {
           sent_command("bi\n");
-          sleep(10).then(() => {
+          sleep(100).then(() => {
             sent_command("fv\n");
-            sleep(10).then(() => {
+            sleep(100).then(() => {
               sent_command("ls\n");
             });
           });
