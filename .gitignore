@@ -2,4 +2,5 @@ dist
 */build
 web_interface/*.html
 !web_interface/index.html
+!web_interface/google*.html
 /firmware_list.md
